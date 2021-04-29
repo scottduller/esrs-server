@@ -1,24 +1,48 @@
 const express = require('express');
-const router = express.Router();
 const passport = require('passport');
 
-router.post('/register_login', (req, res, next) => {
-	passport.authenticate('local', function (err, user, info) {
-		if (err) {
-			return res.status(400).json({ errors: err });
-		}
-		if (!user) {
-			return res.status(400).json({ errors: 'No user found' });
-		}
-		req.logIn(user, function (err) {
-			if (err) {
-				return res.status(400).json({ errors: err });
-			}
-			return res
-				.status(200)
-				.json({ success: `logged in ${user.id}` });
-		});
-	})(req, res, next);
+const User = require('../models/User');
+
+const router = express.Router();
+
+router.post('/register', async (req, res, next) => {
+  const {
+    username, password, name, favourites,
+  } = req.body;
+
+  if (!username || !name || !favourites || !password) {
+    res.status(422).json({ success: false, message: 'Username, name, favourites and password are required' });
+  }
+
+  try {
+    const user = await User.findOne({ username });
+
+    if (user) {
+      res.status(409).json({ success: false, message: 'User already exists with this username' });
+    }
+
+    await User.register({ username, name, favourites }, password);
+    res.status(201).json({ success: true, message: 'User registered' });
+  } catch (err) {
+    next({ success: false, message: err.message });
+  }
+});
+
+router.post('/login', passport.authenticate('local', (req, res, err) => {
+  if (err) {
+    res.status(500).json({ success: false, message: err.message });
+  } else {
+    res.status(200).json({ success: true, message: 'User logged in' });
+  }
+}));
+
+router.get('/logout', async (req, res, next) => {
+  try {
+    await req.logout();
+    res.status(200).json({ success: true, message: 'User logged out' });
+  } catch (err) {
+    next({ success: false, message: err.message });
+  }
 });
 
 module.exports = router;

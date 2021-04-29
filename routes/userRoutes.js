@@ -1,34 +1,50 @@
-const mongoose = require('mongoose');
-const requireLogin = require('../middleware/requireLogin');
 const express = require('express');
+const User = require('../models/User');
+const requireLogin = require('../middleware/requireLogin');
+
 const router = express.Router();
 
-const User = require('../models/User');
-
-router.get('/', requireLogin, async (req, res) => {
-	const user = await User.findOne({
-		_id: req.user.id,
-	});
-
-	res.send(user);
+router.get('/', requireLogin, async (req, res, next) => {
+  try {
+    const users = await User.find({});
+    res.status(200).json({ success: true, payload: users });
+  } catch (err) {
+    next({ success: false, message: err.message });
+  }
 });
 
-router.put('/', requireLogin, async (req, res) => {
-	const { name, favourites } = req.body;
+router.get('/:id', requireLogin, async (req, res, next) => {
+  try {
+    const user = await User.find({ _id: req.params.id });
+    res.status(200).json({ success: true, payload: user });
+  } catch (err) {
+    next({ success: false, message: err.message });
+  }
+});
 
-	try {
-		const user = await User.findOne({
-			_id: req.user.id,
-		});
+router.put('/:id', requireLogin, async (req, res, next) => {
+  const { username, name, favourites } = req.body;
+  try {
+    const user = await User.findOne({ _id: req.params.id });
 
-		user.name = name;
-		user.favourites = favourites;
+    user.username = username;
+    user.name = name;
+    user.favourites = favourites;
 
-		await user.save();
-		res.send(user);
-	} catch (err) {
-		res.send(500, err);
-	}
+    await user.save();
+    res.status(200).json({ success: true, message: 'User updated', payload: user });
+  } catch (err) {
+    next({ success: false, message: err.message });
+  }
+});
+
+router.delete('/:id', requireLogin, async (req, res, next) => {
+  try {
+    const user = await User.deleteOne({ _id: req.params.id });
+    res.status(200).json({ success: true, message: 'User deleted', payload: user });
+  } catch (err) {
+    next({ success: false, message: err.message });
+  }
 });
 
 module.exports = router;

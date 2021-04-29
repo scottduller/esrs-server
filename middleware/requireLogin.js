@@ -1,7 +1,6 @@
 module.exports = (req, res, next) => {
-  if (!req.user) {
-    return res.status(401).send({ error: 'You must log in!' });
+  if (req.isAuthenticated()) {
+    return next();
   }
-
-  next();
+  return res.status(401).json({ success: false, message: 'Unauthorised Access' });
 };

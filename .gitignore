@@ -61,6 +61,4 @@ typings/
 .next
 
 # config files hidden
-config/development.js
-config/ci.js
-config/production.js
+config/config.env

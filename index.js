@@ -1,11 +1,10 @@
 const express = require('express');
-const cookieSession = require('cookie-session');
-
+const session = require('express-session');
 const morgan = require('morgan');
-
-const passport = require('./utils/passport');
+const passport = require('./config/passport');
 const connectDB = require('./config/db');
-const keys = require('./config/keys');
+
+require('dotenv').config({ path: './config/config.env' });
 
 require('./models/Level');
 require('./models/User');
@@ -19,34 +18,34 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 if (process.env.NODE_ENV === 'development') {
-	app.use(morgan('dev'));
-}
-if (process.env.NODE_ENV === 'production') {
-	app.use(
-		morgan('tiny', {
-			skip: function (req, res) {
-				return res.statusCode < 400;
-			},
-		})
-	);
+  app.use(morgan('dev'));
 }
 
-app.use(
-	cookieSession({
-		maxAge: 30 * 24 * 60 * 60 * 1000,
-		keys: [keys.cookieKey],
-	})
-);
+if (process.env.NODE_ENV === 'production') {
+  app.use(
+    morgan('tiny', {
+      skip(req, res) {
+        return res.statusCode < 400;
+      },
+    }),
+  );
+}
+
+app.use(session({
+  secret: process.env.EXPRESS_SECRET,
+  resave: false,
+  saveUninitialized: true,
+}));
 
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.use('/api/auth', require('./routes/authRoutes'));
+app.use('/api/users', require('./routes/userRoutes'));
 app.use('/api/levels', require('./routes/levelRoutes'));
 app.use('/api/playlists', require('./routes/playlistRoutes'));
 
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
-	console.log(`SUCCESS ... Listening on port ${PORT}`);
+  console.log(`SUCCESS ... Listening on port ${PORT}`);
 });
