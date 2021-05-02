@@ -49,6 +49,8 @@ if (!process.env.EXPRESS_SECRET) {
   process.exit(1);
 }
 
+if (process.env.DEV_MONGO_URI === '{$DEV_MONGO_URI}') process.exit(1);
+
 const connectDB = async () => {
   try {
     let uri;
@@ -67,7 +69,7 @@ const connectDB = async () => {
         throw new Error('Node environment invalid');
     }
 
-    const conn = await mongoose.connect(uri.toString(), {
+    const conn = await mongoose.connect(uri, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
       useFindAndModify: false,
