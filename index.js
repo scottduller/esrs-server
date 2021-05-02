@@ -12,6 +12,11 @@ require('./models/Playlist');
 
 const app = express();
 
+console.log(process.env.EXPRESS_SECRET !== undefined);
+console.log(process.env.DEV_MONGO_URI !== undefined);
+console.log(process.env.TEST_MONGO_URI !== undefined);
+console.log(process.env.PROD_MONGO_URI !== undefined);
+
 console.log(process.env.EXPRESS_SECRET);
 console.log(process.env.DEV_MONGO_URI);
 console.log(process.env.TEST_MONGO_URI);
