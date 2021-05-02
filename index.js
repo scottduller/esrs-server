@@ -36,10 +36,10 @@ switch (process.env.NODE_ENV) {
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-const secret = process.env.EXPRESS_SECRET;
+const secretStr = process.env.EXPRESS_SECRET;
 
 app.use(session({
-  secret,
+  secret: secretStr.toString(),
   resave: false,
   saveUninitialized: true,
 }));
