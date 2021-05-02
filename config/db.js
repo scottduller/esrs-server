@@ -18,7 +18,7 @@ const connectDB = async () => {
         throw new Error('Node environment invalid');
     }
 
-    const conn = await mongoose.connect(uri, {
+    const conn = await mongoose.connect(uri.toString(), {
       useNewUrlParser: true,
       useUnifiedTopology: true,
       useFindAndModify: false,
@@ -48,7 +48,7 @@ const resetDB = async () => {
       default:
         throw new Error('Node environment invalid');
     }
-    const conn = await mongoose.connect(uri, {
+    const conn = await mongoose.connect(uri.toString(), {
       useNewUrlParser: true,
       useUnifiedTopology: true,
       useFindAndModify: false,
