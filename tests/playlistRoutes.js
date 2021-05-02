@@ -102,8 +102,11 @@ describe('Playlist endpoints', () => {
 
     const { payload } = res.body;
     payload.updatedAt = '';
+    payload.__v = 0;
+
     playlist.name = 'updatedPlaylist';
-    playlist.levels = [level];
+    playlist.levels = [level._id];
+    playlist.updatedAt = '';
 
     expect(payload).toEqual(playlist);
   });
@@ -118,6 +121,7 @@ describe('Playlist endpoints', () => {
 
     const { payload } = res.body;
     payload.updatedAt = '';
+    payload.__v = 0;
 
     expect(payload).toEqual(playlist);
   });

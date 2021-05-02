@@ -17,7 +17,8 @@ const playlistSchema = new mongoose.Schema({
       required: true,
     },
   ],
-});
+},
+{ timestamps: true });
 
 // Export the model
 module.exports = mongoose.model('Playlist', playlistSchema);
