@@ -4,23 +4,11 @@ const morgan = require('morgan');
 const passport = require('./config/passport');
 const { connectDB, resetDB } = require('./config/db');
 
-require('dotenv').config();
-
 require('./models/Level');
 require('./models/User');
 require('./models/Playlist');
 
 const app = express();
-
-console.log(process.env.EXPRESS_SECRET !== undefined);
-console.log(process.env.DEV_MONGO_URI !== undefined);
-console.log(process.env.TEST_MONGO_URI !== undefined);
-console.log(process.env.PROD_MONGO_URI !== undefined);
-
-console.log(process.env.EXPRESS_SECRET);
-console.log(process.env.DEV_MONGO_URI);
-console.log(process.env.TEST_MONGO_URI);
-console.log(process.env.PROD_MONGO_URI);
 
 switch (process.env.NODE_ENV) {
   case 'development':
@@ -48,8 +36,10 @@ switch (process.env.NODE_ENV) {
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
+const secret = process.env.EXPRESS_SECRET;
+
 app.use(session({
-  secret: process.env.EXPRESS_SECRET,
+  secret,
   resave: false,
   saveUninitialized: true,
 }));
