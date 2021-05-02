@@ -30,6 +30,23 @@ switch (process.env.NODE_ENV) {
     throw new Error('Node environment invalid');
 }
 
+if (!process.env.DEV_MONGO_URI) {
+  console.log('DEV_MONGO_URI');
+  process.exit(1);
+}
+if (!process.env.TEST_MONGO_URI) {
+  console.log('TEST_MONGO_URI');
+  process.exit(1);
+}
+if (!process.env.PROD_MONGO_URI) {
+  console.log('PROD_MONGO_URI');
+  process.exit(1);
+}
+if (!process.env.EXPRESS_SECRET) {
+  console.log('EXPRESS_SECRET');
+  process.exit(1);
+}
+
 const connectDB = async () => {
   try {
     let uri;
