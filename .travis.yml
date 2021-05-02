@@ -4,7 +4,7 @@ services:
 before_install:
 - docker build -t scottduller/esrs-server -f Dockerfile.dev .
 script:
-- docker run -e EXPRESS_SECRET={$EXPRESS_SECRET} -e DEV_MONGO_URI={$DEV_MONGO_URI} -e PROD_MONGO_URI={$PROD_MONGO_URI} -e TEST_MONGO_URI={$TEST_MONGO_URI} scottduller/esrs-server yarn test
+- docker run -e EXPRESS_SECRET=$EXPRESS_SECRET -e DEV_MONGO_URI=$DEV_MONGO_URI -e PROD_MONGO_URI=$PROD_MONGO_URI -e TEST_MONGO_URI=$TEST_MONGO_URI scottduller/esrs-server yarn test
 deploy:
   provider: elasticbeanstalk
   region: eu-west-2
