@@ -4,7 +4,7 @@ const morgan = require('morgan');
 const passport = require('./config/passport');
 const { connectDB, resetDB } = require('./config/db');
 
-// require('dotenv').config({ path: './config/config.env' });
+require('dotenv').config();
 
 require('./models/Level');
 require('./models/User');
@@ -49,7 +49,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 app.use(session({
-  secret: 'secret',
+  secret: process.env.EXPRESS_SECRET,
   resave: false,
   saveUninitialized: true,
 }));
