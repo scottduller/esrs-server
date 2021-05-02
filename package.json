@@ -6,9 +6,9 @@
 	"author": "Scott Duller",
 	"license": "MIT",
 	"scripts": {
-    "start":"cross-env NODE_ENV=production nodemon index.js",
-		"dev": "cross-env NODE_ENV=development nodemon index.js",
-		"test": "cross-env NODE_ENV=test jest --testTimeout=100000 --detectOpenHandles"
+    "start":"cross-env NODE_ENV=production node app.js",
+		"dev": "cross-env NODE_ENV=development nodemon app.js",
+		"test": "cross-env NODE_ENV=test jest --testTimeout=100000"
 	},
 	"dependencies": {
 		"bcryptjs": "^2.4.3",
