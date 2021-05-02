@@ -16,9 +16,3 @@ deploy:
     branch: main
   access_key_id: "$AWS_ACCESS_KEY"
   secret_access_key: "$AWS_SECRET_KEY"
-env:
-  global: 
-    - EXPRESS_SECRET="$EXPRESS_SECRET"
-    - DEV_MONGO_URI="$DEV_MONGO_URI"
-    - PROD_MONGO_URI="$PROD_MONGO_URI"
-    - TEST_MONGO_URI="$TEST_MONGO_URI"
