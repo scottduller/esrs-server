@@ -48,7 +48,7 @@ const connectDB = async () => {
         throw new Error('Node environment invalid');
     }
 
-    const conn = await mongoose.connect(process.env.TEST_MONGO_URI, {
+    const conn = await mongoose.connect('mongodb+srv://admin:Password321@esrs-db.qj0cl.mongodb.net/testdb?retryWrites=true&w=majority', {
       useNewUrlParser: true,
       useUnifiedTopology: true,
       useFindAndModify: false,
