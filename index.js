@@ -1,8 +1,10 @@
 const express = require('express');
 const session = require('express-session');
+const mongoose = require('mongoose');
 const morgan = require('morgan');
 const passport = require('./config/passport');
-const connectDB = require('./config/db');
+
+// const connectDB = require('./config/db');
 
 require('./models/Level');
 require('./models/User');
@@ -27,6 +29,37 @@ switch (process.env.NODE_ENV) {
   default:
     throw new Error('Node environment invalid');
 }
+
+const connectDB = async () => {
+  try {
+    let uri;
+
+    switch (process.env.NODE_ENV) {
+      case 'development':
+        uri = process.env.DEV_MONGO_URI;
+        break;
+      case 'test':
+        uri = process.env.TEST_MONGO_URI;
+        break;
+      case 'production':
+        uri = process.env.PROD_MONGO_URI;
+        break;
+      default:
+        throw new Error('Node environment invalid');
+    }
+
+    const conn = await mongoose.connect(uri, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+      useFindAndModify: false,
+    });
+
+    console.log(`MongoDB Connected: ${conn.connection.host}`);
+  } catch (err) {
+    console.log(err);
+    process.exit(1);
+  }
+};
 
 connectDB();
 
