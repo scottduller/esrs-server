@@ -7,12 +7,15 @@ const connectDB = async () => {
     switch (process.env.NODE_ENV) {
       case 'development':
         uri = process.env.DEV_MONGO_URI;
+        process.exit(1);
         break;
       case 'test':
         uri = process.env.TEST_MONGO_URI;
+        process.exit(1);
         break;
       case 'production':
         uri = process.env.PROD_MONGO_URI;
+        process.exit(1);
         break;
       default:
         throw new Error('Node environment invalid');
