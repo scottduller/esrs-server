@@ -25,8 +25,8 @@ const UserSchema = new mongoose.Schema(
   { timestamps: true, strict: false },
 );
 
-const User = mongoose.model('User', UserSchema);
+UserSchema.plugin(passportLocalMongoose, { usernameField: 'username' });
 
-User.plugin(passportLocalMongoose, { usernameField: 'username' });
+const User = mongoose.model('User', UserSchema);
 
 module.exports = User;

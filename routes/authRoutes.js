@@ -28,13 +28,13 @@ router.post('/register', async (req, res, next) => {
   }
 });
 
-router.post('/login', passport.authenticate('local', (req, res, err) => {
-  if (err) {
-    res.status(500).json({ success: false, message: err.message });
+router.post('/login', passport.authenticate('local'), (req, res) => {
+  if (!req.user) {
+    res.status(500).json({ success: false, message: 'User not logged in' });
   } else {
-    res.status(200).json({ success: true, message: 'User logged in' });
+    res.status(200).json({ success: true, message: 'User logged in', payload: req.user });
   }
-}));
+});
 
 router.get('/logout', async (req, res, next) => {
   try {

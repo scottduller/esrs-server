@@ -4,7 +4,7 @@ const requireLogin = require('../middleware/requireLogin');
 
 const router = express.Router();
 
-router.get('/', requireLogin, async (req, res, next) => {
+router.get('/user', requireLogin, async (req, res, next) => {
   try {
     const playlists = await Playlist.find({ user: req.user.id });
     res.status(200).json({ success: true, payload: playlists });
@@ -13,9 +13,18 @@ router.get('/', requireLogin, async (req, res, next) => {
   }
 });
 
+router.get('/', requireLogin, async (req, res, next) => {
+  try {
+    const playlists = await Playlist.find({});
+    res.status(200).json({ success: true, payload: playlists });
+  } catch (err) {
+    next({ success: false, message: err.message });
+  }
+});
+
 router.get('/:id', requireLogin, async (req, res, next) => {
   try {
-    const playlist = await Playlist.find({ user: req.user.id, _id: req.params.id });
+    const playlist = await Playlist.findOne({ _id: req.params.id });
     res.status(200).json({ success: true, payload: playlist });
   } catch (err) {
     next({ success: false, message: err.message });
@@ -60,11 +69,14 @@ router.put('/:id', requireLogin, async (req, res, next) => {
 
 router.delete('/:id', requireLogin, async (req, res, next) => {
   try {
-    const playlist = await Playlist.deleteOne({
-      _id: req.params.id,
-      user: req.user.id,
-    });
-    res.status(200).json({ success: true, message: 'Playlist deleted', payload: playlist });
+    const playlist = await Playlist.findById(req.params.id);
+
+    if (playlist.user.toString() !== req.user.id) {
+      res.status(401).json({ success: false, message: 'Not Authorised' });
+    } else {
+      await Playlist.findByIdAndRemove(req.params.id);
+      res.status(200).json({ success: true, message: 'Playlist deleted', payload: playlist });
+    }
   } catch (err) {
     next({ success: false, message: err.message });
   }
