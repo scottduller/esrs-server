@@ -4,7 +4,7 @@ const morgan = require('morgan');
 const passport = require('./config/passport');
 const { connectDB, resetDB } = require('./config/db');
 
-require('dotenv').config({ path: './config/config.env' });
+// require('dotenv').config({ path: './config/config.env' });
 
 require('./models/Level');
 require('./models/User');
