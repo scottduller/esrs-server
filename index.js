@@ -1,6 +1,7 @@
 const express = require('express');
 const session = require('express-session');
 const morgan = require('morgan');
+const mongoose = require('mongoose');
 const passport = require('./config/passport');
 require('dotenv').config({ path: './config/config.env' });
 
@@ -35,10 +36,8 @@ connectDB();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-const secretStr = process.env.EXPRESS_SECRET;
-
 app.use(session({
-  secret: secretStr.toString(),
+  secret: process.env.EXPRESS_SECRET,
   resave: false,
   saveUninitialized: true,
 }));
@@ -54,7 +53,9 @@ app.use('/api/playlists', require('./routes/playlistRoutes'));
 const PORT = process.env.PORT || 5000;
 
 const server = app.listen(PORT, () => {
-  console.log(`SUCCESS ... Listening on port ${PORT}`);
+  const host = server.address().address;
+  const { port } = server.address();
+  console.log('Example app listening at http://%s:%s', host, port);
 });
 
 module.exports = server;
