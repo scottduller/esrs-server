@@ -2,7 +2,7 @@ const express = require('express');
 const session = require('express-session');
 const morgan = require('morgan');
 const passport = require('./config/passport');
-const { connectDB, resetDB } = require('./config/db');
+const connectDB = require('./config/db');
 
 require('./models/Level');
 require('./models/User');
@@ -12,12 +12,8 @@ const app = express();
 
 switch (process.env.NODE_ENV) {
   case 'development':
-    app.use(morgan('dev'));
-    connectDB();
-    break;
   case 'test':
     app.use(morgan('dev'));
-    resetDB();
     break;
   case 'production':
     app.use(
@@ -27,11 +23,12 @@ switch (process.env.NODE_ENV) {
         },
       }),
     );
-    connectDB();
     break;
   default:
     throw new Error('Node environment invalid');
 }
+
+connectDB();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
