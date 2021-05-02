@@ -4,6 +4,8 @@ const morgan = require('morgan');
 const mongoose = require('mongoose');
 const passport = require('./config/passport');
 
+require('dotenv').config();
+
 // const connectDB = require('./config/db');
 
 require('./models/Level');
@@ -65,7 +67,7 @@ const connectDB = async () => {
         throw new Error('Node environment invalid');
     }
 
-    const conn = await mongoose.connect(uri, {
+    const conn = await mongoose.connect(uri.toString(), {
       useNewUrlParser: true,
       useUnifiedTopology: true,
       useFindAndModify: false,
