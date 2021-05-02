@@ -49,7 +49,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 app.use(session({
-  secret: process.env.EXPRESS_SECRET,
+  secret: 'secret',
   resave: false,
   saveUninitialized: true,
 }));
