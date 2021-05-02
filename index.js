@@ -2,7 +2,7 @@ const express = require('express');
 const session = require('express-session');
 const morgan = require('morgan');
 const passport = require('./config/passport');
-require('dotenv').config('./config/config.env');
+require('dotenv').config({ path: './config/config.env' });
 
 const connectDB = require('./config/db');
 

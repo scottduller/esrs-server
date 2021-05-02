@@ -18,8 +18,6 @@ const connectDB = async () => {
         throw new Error('Node environment invalid');
     }
 
-    if (uri.toString() === 'mongodb+srv://admin:Password321@esrs-db.qj0cl.mongodb.net/testdb?retryWrites=true&w=majority') process.exit(1);
-
     const conn = await mongoose.connect(uri, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
