@@ -10,17 +10,12 @@ const levelSchema = new mongoose.Schema(
     name: {
       type: String,
       required: true,
-      unique: true,
     },
     description: {
       type: String,
       default: '',
     },
     votes: {
-      type: Number,
-      default: 0,
-    },
-    favorites: {
       type: Number,
       default: 0,
     },

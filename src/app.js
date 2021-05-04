@@ -1,12 +1,12 @@
+require('dotenv').config({ path: './src/config/config.env' });
+
 const express = require('express');
 const session = require('express-session');
 const morgan = require('morgan');
-const passport = require('./config/passport');
-require('dotenv').config({ path: './config/config.env' });
 
-require('./models/Level');
-require('./models/User');
-require('./models/Playlist');
+const passport = require('./utils/passport');
+const errorHandler = require('./middleware/errorHandler');
+const notFound = require('./middleware/notFound');
 
 const app = express();
 
@@ -44,5 +44,8 @@ app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/users', require('./routes/userRoutes'));
 app.use('/api/levels', require('./routes/levelRoutes'));
 app.use('/api/playlists', require('./routes/playlistRoutes'));
+
+app.use(notFound);
+app.use(errorHandler);
 
 module.exports = app;

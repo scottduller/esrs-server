@@ -1,6 +1,7 @@
 /* eslint-disable no-underscore-dangle */
+// eslint-disable-next-line import/no-extraneous-dependencies
 const request = require('supertest');
-const app = require('..');
+const app = require('../app');
 const Level = require('../models/Level');
 const Playlist = require('../models/Playlist');
 const User = require('../models/User');
@@ -20,7 +21,6 @@ describe('User endpoints', () => {
         username: 'username',
         password: 'password',
         name: 'name',
-        favourites: [],
       });
 
     const res1 = await request(app)
@@ -55,7 +55,7 @@ describe('User endpoints', () => {
     const res = await request(app)
       .put(`/api/users/${user._id}`)
       .set('cookie', cookie)
-      .send({ username: 'newUsername', name: 'newName', favourites: [] });
+      .send({ username: 'newUsername', name: 'newName' });
     expect(res.statusCode).toEqual(200);
     expect(res.body.success).toEqual(true);
     expect(res.body.message).toEqual('User updated');

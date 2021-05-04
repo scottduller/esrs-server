@@ -1,5 +1,6 @@
+// eslint-disable-next-line import/no-extraneous-dependencies
 const request = require('supertest');
-const app = require('..');
+const app = require('../app');
 const User = require('../models/User');
 const Level = require('../models/Level');
 const Playlist = require('../models/Playlist');
@@ -18,7 +19,6 @@ describe('Auth endpoints', () => {
         username: 'username',
         password: 'password',
         name: 'name',
-        favourites: [],
       });
     expect(res.statusCode).toEqual(201);
     expect(res.body.success).toEqual(true);

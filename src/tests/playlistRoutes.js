@@ -1,14 +1,17 @@
 /* eslint-disable no-underscore-dangle */
+// eslint-disable-next-line import/no-extraneous-dependencies
 const request = require('supertest');
-const app = require('..');
+const mongoose = require('mongoose');
+const app = require('../app');
 const Level = require('../models/Level');
 const Playlist = require('../models/Playlist');
 const User = require('../models/User');
 
 let cookie;
 let level;
+let playlist;
 
-describe('Level endpoints', () => {
+describe('Playlist endpoints', () => {
   beforeAll(async () => {
     await User.deleteMany({});
     await Level.deleteMany({});
@@ -20,20 +23,17 @@ describe('Level endpoints', () => {
         username: 'username',
         password: 'password',
         name: 'name',
-        favourites: [],
       });
 
-    const res1 = await request(app)
+    const res = await request(app)
       .post('/api/auth/login')
       .send({
         username: 'username',
         password: 'password',
       });
-    cookie = res1.headers['set-cookie'];
-  });
+    cookie = res.headers['set-cookie'];
 
-  it('should create a new level', async () => {
-    const res = await request(app)
+    const res1 = await request(app)
       .post('/api/levels/')
       .send({
         name: 'level',
@@ -41,75 +41,88 @@ describe('Level endpoints', () => {
         levelData: 'levelData',
       })
       .set('cookie', cookie);
-    expect(res.statusCode).toEqual(200);
-    expect(res.body.success).toEqual(true);
-
-    level = res.body.payload;
+    level = res1.body.payload;
   });
 
-  it('should get all levels', async () => {
+  afterAll(async () => {
+    app.close();
+    mongoose.connection.close();
+  });
+
+  it('should create a new playlist', async () => {
     const res = await request(app)
-      .get('/api/levels/')
+      .post('/api/playlists/')
+      .send({
+        name: 'playlist',
+        levels: [],
+      })
       .set('cookie', cookie);
     expect(res.statusCode).toEqual(200);
     expect(res.body.success).toEqual(true);
   });
 
-  it('should get a level by id', async () => {
+  it('should get all playlists', async () => {
     const res = await request(app)
-      .get(`/api/levels/${level._id}`)
+      .get('/api/playlists/')
       .set('cookie', cookie);
     expect(res.statusCode).toEqual(200);
     expect(res.body.success).toEqual(true);
-    expect(res.body.payload).toEqual(level);
+
+    [playlist] = res.body.payload;
   });
 
-  it('should get all logged in users levels', async () => {
+  it('should get a playlist by id', async () => {
     const res = await request(app)
-      .get('/api/levels/user')
+      .get(`/api/playlists/${playlist._id}`)
+      .set('cookie', cookie);
+    expect(res.statusCode).toEqual(200);
+    expect(res.body.success).toEqual(true);
+    expect(res.body.payload).toEqual(playlist);
+  });
+
+  it('should get all logged in users playlists', async () => {
+    const res = await request(app)
+      .get('/api/playlists/user')
       .set('cookie', cookie);
     expect(res.statusCode).toEqual(200);
     expect(res.body.success).toEqual(true);
   });
 
-  it('should update a level by id', async () => {
+  it('should update a playlist by id', async () => {
     const res = await request(app)
-      .put(`/api/levels/${level._id}`)
+      .put(`/api/playlists/${playlist._id}`)
       .set('cookie', cookie)
       .send({
-        name: 'updatedLevel',
-        description: 'updatedDescription',
-        votes: 2,
-        favorites: 2,
-        levelData: 'updatedLevelData',
+        name: 'updatedPlaylist',
+        levels: [level],
       });
     expect(res.statusCode).toEqual(200);
     expect(res.body.success).toEqual(true);
-    expect(res.body.message).toEqual('Level updated');
+    expect(res.body.message).toEqual('Playlist updated');
 
     const { payload } = res.body;
     payload.updatedAt = '';
-    level.name = 'updatedLevel';
-    level.description = 'updatedDescription';
-    level.votes = 2;
-    level.favorites = 2;
-    level.levelData = 'updatedLevelData';
-    level.updatedAt = '';
+    payload.__v = 0;
 
-    expect(payload).toEqual(level);
+    playlist.name = 'updatedPlaylist';
+    playlist.levels = [level._id];
+    playlist.updatedAt = '';
+
+    expect(payload).toEqual(playlist);
   });
 
-  it('should delete a level by id', async () => {
+  it('should delete a playlist by id', async () => {
     const res = await request(app)
-      .delete(`/api/levels/${level._id}`)
+      .delete(`/api/playlists/${playlist._id}`)
       .set('cookie', cookie);
     expect(res.statusCode).toEqual(200);
     expect(res.body.success).toEqual(true);
-    expect(res.body.message).toEqual('Level deleted');
+    expect(res.body.message).toEqual('Playlist deleted');
 
     const { payload } = res.body;
     payload.updatedAt = '';
+    payload.__v = 0;
 
-    expect(payload).toEqual(level);
+    expect(payload).toEqual(playlist);
   });
 });

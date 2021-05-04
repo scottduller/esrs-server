@@ -14,13 +14,6 @@ const UserSchema = new mongoose.Schema(
       required: true,
       unique: true,
     },
-    favourites: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Level',
-        required: true,
-      },
-    ],
   },
   { timestamps: true, strict: false },
 );
