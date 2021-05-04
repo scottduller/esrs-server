@@ -8,44 +8,53 @@ const passport = require('./utils/passport');
 const errorHandler = require('./middleware/errorHandler');
 const notFound = require('./middleware/notFound');
 
-const app = express();
+const authRoutes = require('./routes/authRoutes');
+const userRoutes = require('./routes/userRoutes');
+const levelRoutes = require('./routes/levelRoutes');
+const playlistRoutes = require('./routes/playlistRoutes');
 
-switch (process.env.NODE_ENV) {
-  case 'development':
-  case 'test':
-    app.use(morgan('dev'));
-    break;
-  case 'production':
-    app.use(
-      morgan('tiny', {
-        skip(req, res) {
-          return res.statusCode < 400;
-        },
-      }),
-    );
-    break;
-  default:
-    throw new Error('Node environment invalid');
-}
+const createServer = () => {
+  const app = express();
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+  switch (process.env.NODE_ENV) {
+    case 'development':
+    case 'test':
+      app.use(morgan('dev'));
+      break;
+    case 'production':
+      app.use(
+        morgan('tiny', {
+          skip(req, res) {
+            return res.statusCode < 400;
+          },
+        }),
+      );
+      break;
+    default:
+      throw new Error('Node environment invalid');
+  }
 
-app.use(session({
-  secret: process.env.EXPRESS_SECRET,
-  resave: false,
-  saveUninitialized: true,
-}));
+  app.use(express.json());
+  app.use(express.urlencoded({ extended: false }));
 
-app.use(passport.initialize());
-app.use(passport.session());
+  app.use(session({
+    secret: process.env.EXPRESS_SECRET,
+    resave: false,
+    saveUninitialized: true,
+  }));
 
-app.use('/api/auth', require('./routes/authRoutes'));
-app.use('/api/users', require('./routes/userRoutes'));
-app.use('/api/levels', require('./routes/levelRoutes'));
-app.use('/api/playlists', require('./routes/playlistRoutes'));
+  app.use(passport.initialize());
+  app.use(passport.session());
 
-app.use(notFound);
-app.use(errorHandler);
+  app.use('/api/auth', authRoutes);
+  app.use('/api/users', userRoutes);
+  app.use('/api/levels', levelRoutes);
+  app.use('/api/playlists', playlistRoutes);
 
-module.exports = app;
+  app.use(notFound);
+  app.use(errorHandler);
+
+  return app;
+};
+
+module.exports = createServer;
