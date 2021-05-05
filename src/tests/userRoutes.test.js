@@ -1,7 +1,7 @@
 /* eslint-disable no-underscore-dangle */
 const request = require('supertest');
 const createServer = require('../app');
-const db = require('../config/mockDb');
+const setupDB = require('./setup');
 
 describe('User endpoints', () => {
   let cookie1;
@@ -10,7 +10,7 @@ describe('User endpoints', () => {
 
   const app = createServer();
 
-  beforeAll(async () => { await db.connect(); });
+  setupDB();
 
   beforeEach(async () => {
     let res = await request(app)
@@ -41,10 +41,6 @@ describe('User endpoints', () => {
       });
     cookie1 = res.headers['set-cookie'];
   });
-
-  afterEach(async () => { await db.clearDatabase(); });
-
-  afterAll(async () => { await db.closeDatabase(); });
 
   it('should get all users', async () => {
     const res = await request(app)

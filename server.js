@@ -1,7 +1,7 @@
 const createServer = require('./src/app.js');
-const connectDB = require('./src/config/db');
+const db = require('./src/config/db');
 
-connectDB();
+db.connect();
 
 const PORT = process.env.PORT || 5000;
 

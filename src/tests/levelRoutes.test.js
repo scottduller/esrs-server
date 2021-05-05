@@ -1,8 +1,8 @@
 /* eslint-disable no-underscore-dangle */
 const request = require('supertest');
 const createServer = require('../app');
-const db = require('../config/mockDb');
 const Level = require('../models/Level');
+const setupDB = require('./setup');
 
 describe('Level endpoints', () => {
   let cookie1;
@@ -12,7 +12,7 @@ describe('Level endpoints', () => {
 
   const app = createServer();
 
-  beforeAll(async () => { await db.connect(); });
+  setupDB();
 
   beforeEach(async () => {
     let res = await request(app)
@@ -51,10 +51,6 @@ describe('Level endpoints', () => {
       });
     cookie2 = res.headers['set-cookie'];
   });
-
-  afterEach(async () => { await db.clearDatabase(); });
-
-  afterAll(async () => { await db.closeDatabase(); });
 
   it('should get the logged in users levels', async () => {
     const level1 = await Level.create({

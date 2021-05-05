@@ -1,16 +1,14 @@
+/* eslint-disable no-await-in-loop */
+/* eslint-disable no-restricted-syntax */
 /* eslint-disable no-underscore-dangle */
 const request = require('supertest');
 const createServer = require('../app');
-const db = require('../config/mockDb');
+const setupDB = require('./setup');
 
 describe('Auth endpoints', () => {
   const app = createServer();
 
-  beforeAll(async () => { await db.connect(); });
-
-  afterEach(async () => { await db.clearDatabase(); });
-
-  afterAll(async () => { await db.closeDatabase(); });
+  setupDB();
 
   it('should register a new user', async () => {
     const user = {
