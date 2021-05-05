@@ -2,9 +2,9 @@
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable no-underscore-dangle */
 const mongoose = require('mongoose');
-// const { MongoMemoryServer } = require('mongodb-memory-server');
+const { MongoMemoryServer } = require('mongodb-memory-server');
 
-// const mongod = new MongoMemoryServer();
+const mongod = new MongoMemoryServer();
 
 async function removeAllCollections() {
   const collections = Object.keys(mongoose.connection.collections);
@@ -37,8 +37,8 @@ module.exports = function setupDB() {
       useUnifiedTopology: true,
       useCreateIndex: true,
     };
-    // const uri = await mongod.getUri();
-    await mongoose.connect(process.env.TEST_MONGO_URI, mongooseOptions);
+    const uri = await mongod.getUri();
+    await mongoose.connect(uri, mongooseOptions);
   });
 
   afterEach(async () => {
