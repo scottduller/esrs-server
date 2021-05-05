@@ -1,7 +1,7 @@
 require('dotenv').config({ path: './src/config/config.env' });
 
 const express = require('express');
-const session = require('express-session');
+const session = require('cookie-session');
 const morgan = require('morgan');
 
 const passport = require('./utils/passport');
