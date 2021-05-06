@@ -25,6 +25,5 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
     - run: yarn
-    - run: yarn run eslint
+    - run: yarn run eslint --fix .
     - run: yarn run test
-    - run: docker build -t scottduller/esrs-server -f Dockerfile .
