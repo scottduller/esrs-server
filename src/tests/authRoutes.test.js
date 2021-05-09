@@ -14,7 +14,6 @@ describe('Auth endpoints', () => {
     const user = {
       username: 'username',
       password: 'password',
-      name: 'name',
     };
 
     const res = await request(app)
@@ -22,12 +21,10 @@ describe('Auth endpoints', () => {
       .send({
         username: 'username',
         password: 'password',
-        name: 'name',
       });
 
     expect(res.status).toBe(201);
     expect(res.body.username).toBe(user.username);
-    expect(res.body.name).toBe(user.name);
   });
 
   it('should login a user', async () => {
@@ -54,32 +51,5 @@ describe('Auth endpoints', () => {
 
     expect(res.status).toBe(200);
     expect(res.body.username).toBe(user.username);
-    expect(res.body.name).toBe(user.name);
-  });
-
-  it('should logout a user', async () => {
-    let res = await request(app)
-      .post('/api/auth/register')
-      .send({
-        username: 'username',
-        password: 'password',
-        name: 'name',
-      });
-
-    res = await request(app)
-      .post('/api/auth/login')
-      .send({
-        username: 'username',
-        password: 'password',
-      });
-
-    const cookie = res.headers['set-cookie'];
-
-    res = await request(app)
-      .get('/api/auth/logout')
-      .set('cookie', cookie);
-
-    expect(res.status).toBe(200);
-    expect(res.body.message).toBe('User logged out');
   });
 });

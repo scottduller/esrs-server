@@ -6,9 +6,9 @@ const Level = require('../models/Level');
 const setupDB = require('./setup');
 
 describe('Playlist endpoints', () => {
-  let cookie1;
+  let jwt1;
   let user1;
-  let cookie2;
+  let jwt2;
   let user2;
 
   const app = createServer();
@@ -42,7 +42,7 @@ describe('Playlist endpoints', () => {
         username: 'username1',
         password: 'password1',
       });
-    cookie1 = res.headers['set-cookie'];
+    jwt1 = `Bearer ${res.body.token}`;
 
     res = await request(app)
       .post('/api/auth/login')
@@ -50,7 +50,7 @@ describe('Playlist endpoints', () => {
         username: 'username2',
         password: 'password2',
       });
-    cookie2 = res.headers['set-cookie'];
+    jwt2 = `Bearer ${res.body.token}`;
   });
 
   it('should get the logged in users playlists', async () => {
@@ -68,7 +68,7 @@ describe('Playlist endpoints', () => {
 
     let res = await request(app)
       .get('/api/playlists/user')
-      .set('cookie', cookie1);
+      .set('Authorization', jwt1);
 
     expect(res.status).toBe(200);
     expect(Array.isArray(res.body)).toBeTruthy();
@@ -81,7 +81,7 @@ describe('Playlist endpoints', () => {
 
     res = await request(app)
       .get('/api/playlists/user')
-      .set('cookie', cookie2);
+      .set('Authorization', jwt2);
 
     expect(res.status).toBe(200);
     expect(Array.isArray(res.body)).toBeTruthy();
@@ -102,7 +102,7 @@ describe('Playlist endpoints', () => {
 
     const res = await request(app)
       .get('/api/playlists/')
-      .set('cookie', cookie1);
+      .set('Authorization', jwt1);
 
     expect(res.status).toBe(200);
     expect(Array.isArray(res.body)).toBeTruthy();
@@ -125,7 +125,7 @@ describe('Playlist endpoints', () => {
         name: 'playlist',
         levels: [],
       })
-      .set('cookie', cookie1);
+      .set('Authorization', jwt1);
     expect(res.status).toBe(201);
 
     expect(res.body.name).toBe(playlist.name);
@@ -144,11 +144,11 @@ describe('Playlist endpoints', () => {
         name: 'playlist',
         levels: [],
       })
-      .set('cookie', cookie1);
+      .set('Authorization', jwt1);
 
     res = await request(app)
       .get(`/api/playlists/${res.body._id}`)
-      .set('cookie', cookie1);
+      .set('Authorization', jwt1);
 
     expect(res.status).toBe(200);
 
@@ -176,11 +176,11 @@ describe('Playlist endpoints', () => {
         name: 'playlist',
         levels: [level],
       })
-      .set('cookie', cookie1);
+      .set('Authorization', jwt1);
 
     res = await request(app)
       .put(`/api/playlists/${res.body._id}`)
-      .set('cookie', cookie1)
+      .set('Authorization', jwt1)
       .send({
         name: 'playlist1',
         description: 'description1',
@@ -202,11 +202,11 @@ describe('Playlist endpoints', () => {
         name: 'playlist',
         levels: [],
       })
-      .set('cookie', cookie1);
+      .set('Authorization', jwt1);
 
     res = await request(app)
       .delete(`/api/playlists/${res.body._id}`)
-      .set('cookie', cookie1);
+      .set('Authorization', jwt1);
 
     expect(res.status).toBe(200);
     expect(res.body.message).toBe('Playlist removed');

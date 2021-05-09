@@ -4,7 +4,7 @@ const createServer = require('../app');
 const setupDB = require('./setup');
 
 describe('User endpoints', () => {
-  let cookie1;
+  let jwt1;
   let user1;
   let user2;
 
@@ -39,13 +39,13 @@ describe('User endpoints', () => {
         username: 'username1',
         password: 'password1',
       });
-    cookie1 = res.headers['set-cookie'];
+    jwt1 = `Bearer ${res.body.token}`;
   });
 
   it('should get all users', async () => {
     const res = await request(app)
       .get('/api/users/')
-      .set('cookie', cookie1);
+      .set('Authorization', jwt1);
 
     expect(res.status).toBe(200);
     expect(Array.isArray(res.body)).toBeTruthy();
@@ -63,7 +63,7 @@ describe('User endpoints', () => {
   it('should get a user by id', async () => {
     const res = await request(app)
       .get(`/api/users/${user1._id}`)
-      .set('cookie', cookie1);
+      .set('Authorization', jwt1);
 
     expect(res.status).toBe(200);
 
