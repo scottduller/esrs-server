@@ -1,6 +1,6 @@
+/* eslint-disable func-names */
 const mongoose = require('mongoose');
-const passportLocalMongoose = require('passport-local-mongoose');
-
+const bcrypt = require('bcrypt');
 // Create Schema
 const UserSchema = new mongoose.Schema(
   {
@@ -9,16 +9,27 @@ const UserSchema = new mongoose.Schema(
       required: true,
       unique: true,
     },
-    name: {
+    password: {
       type: String,
       required: true,
-      unique: true,
     },
   },
   { timestamps: true, strict: false },
 );
 
-UserSchema.plugin(passportLocalMongoose, { usernameField: 'username' });
+UserSchema.pre('save', async function (next) {
+  if (!this.isModified('password')) {
+    next();
+  }
+
+  const salt = await bcrypt.genSalt(10);
+  this.password = await bcrypt.hash(this.password, salt);
+});
+
+UserSchema.methods.matchPassword = async function (password) {
+  // eslint-disable-next-line no-return-await
+  return await bcrypt.compare(password, this.password);
+};
 
 const User = mongoose.model('User', UserSchema);
 
