@@ -1,12 +1,10 @@
 /* eslint-disable no-underscore-dangle */
 const asyncHandler = require('express-async-handler');
-
+const generateToken = require('../utils/generateToken');
 const User = require('../models/User');
 
 const registerUser = asyncHandler(async (req, res) => {
-  const {
-    username, password, name,
-  } = req.body;
+  const { username, password } = req.body;
 
   const userExists = await User.findOne({ username });
 
@@ -15,18 +13,17 @@ const registerUser = asyncHandler(async (req, res) => {
     throw new Error('User already exists');
   }
 
-  if (!username || !name || !password) {
-    res.status(422);
-    throw new Error('Username, name and password are required');
-  }
-
-  const user = await User.register({ username, name }, password);
+  const user = await User.create({
+    username,
+    password,
+  });
 
   if (user) {
     res.status(201).json({
       _id: user._id,
       username: user.username,
-      name: user.name,
+      password: user.password,
+      token: generateToken(user._id),
     });
   } else {
     res.status(400);
@@ -35,21 +32,21 @@ const registerUser = asyncHandler(async (req, res) => {
 });
 
 const loginUser = asyncHandler(async (req, res) => {
-  if (!req.user && !req.isAuthenticated()) {
-    res.status(500);
-    throw new Error('User not logged in');
+  const { username, password } = req.body;
+
+  const user = await User.findOne({ username });
+
+  if (user && (await user.matchPassword(password))) {
+    res.json({
+      _id: user._id,
+      username: user.username,
+      password: user.password,
+      token: generateToken(user._id),
+    });
   } else {
-    res.json(req.user);
+    res.status(401);
+    throw new Error('Invalid email or password');
   }
 });
 
-const logoutUser = asyncHandler(async (req, res) => {
-  await req.logout();
-  if (req.user && req.isAuthenticated()) {
-    res.status(400);
-    throw new Error('User not logged out');
-  }
-  res.json({ message: 'User logged out' });
-});
-
-module.exports = { registerUser, loginUser, logoutUser };
+module.exports = { registerUser, loginUser };

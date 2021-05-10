@@ -4,7 +4,6 @@ const express = require('express');
 const session = require('cookie-session');
 const morgan = require('morgan');
 
-const passport = require('./utils/passport');
 const errorHandler = require('./middleware/errorHandler');
 const notFound = require('./middleware/notFound');
 
@@ -42,9 +41,6 @@ const createServer = () => {
     resave: false,
     saveUninitialized: true,
   }));
-
-  app.use(passport.initialize());
-  app.use(passport.session());
 
   app.use('/api/auth', authRoutes);
   app.use('/api/users', userRoutes);
