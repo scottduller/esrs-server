@@ -8,7 +8,11 @@
 	"scripts": {
 		"start": "cross-env NODE_ENV=production node server.js",
 		"dev": "cross-env NODE_ENV=development nodemon server.js",
-		"test": "cross-env NODE_ENV=test jest --forceExit --detectOpenHandles"
+		"test": "cross-env NODE_ENV=test jest --forceExit --detectOpenHandles",
+		"dropDev": "mongo \"mongodb+srv://esrs-db.qj0cl.mongodb.net/devdb\" --username \"admin\" --eval \"db.dropDatabase()\"",
+    "dropTest": "mongo \"mongodb+srv://esrs-db.qj0cl.mongodb.net/testdb\" --username \"admin\" --eval \"db.dropDatabase()\"",
+    "dropProd": "mongo \"mongodb+srv://esrs-db.qj0cl.mongodb.net/proddb\" --username \"admin\" --eval \"db.dropDatabase()\"",
+    "dropAll": "yarn dropDev && yarn dropTest && yarn dropProd"
 	},
 	"dependencies": {
 		"bcrypt": "^5.0.1",
@@ -25,6 +29,7 @@
 		"jest": "^26.6.3",
 		"jsonwebtoken": "^8.5.1",
 		"jwt-simple": "^0.5.6",
+		"mongodb": "^3.6.6",
 		"mongodb-memory-server": "^6.9.6",
 		"mongoose": "^5.11.16",
 		"morgan": "^1.10.0",
